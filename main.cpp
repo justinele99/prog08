@@ -23,20 +23,18 @@ struct result{
     }
 };
 
-int main() {
-//int main(int argc, const char * argv[]) {
+int main(int argc, char *argv[]) {
 
-    Folder folder("/Users/justi/Downloads/EduCheck/sm_doc_set");
-    //Folder folder("/sm_doc_set");
-    //Folder folder(argv[0]);
+    //Folder folder("sm_doc_set");
+    Folder folder(argv[1]);
     folder.loadFileNames();
     Matrix m(folder.getNumFiles());
 
-    Parser parse(10);
-    //Parser parse(atoi(argv[1]));
+    //Parser parse(6);
+    Parser parse(atoi(argv[2]));
     HashTable table;
 
-    cout << "Processing files...\n" << endl;
+    cout << "Processing files..." << endl;
 
     for (int i = 0; i < folder.getNumFiles(); i++) {
         parse.loadWords(folder.getPath() + folder.getFileName(i));
@@ -45,8 +43,6 @@ int main() {
         while (!parse.isHashingDone()) {
             table.addHashedKey(HashTable::hash(parse.getChunk()), i);
         }
-        if(i%2)
-            cout << "Completed " << (i+1)*100/folder.getNumFiles() << "%" << endl;
     }
 
     for (int i = 0; i < HashTable::getTableSize(); i++) {
@@ -59,7 +55,7 @@ int main() {
     for (int i = 1; i < folder.getNumFiles(); i++) {
         for (int j = i; j < folder.getNumFiles(); j++) {
             int numCollisions = m.getValueAt(i, j);
-            if (numCollisions > 200){
+            if (numCollisions > atoi(argv[3])){
                 result temp{};
                 temp.file1 = i;
                 temp.file2 = j;
@@ -74,6 +70,7 @@ int main() {
         cout << results[i].collisions << ": " << folder.getFileName(results[i].file1);
         cout << ", " << folder.getFileName(results[i].file2) << endl;
     }
+    cout << endl;
     return 0;
 }
 
